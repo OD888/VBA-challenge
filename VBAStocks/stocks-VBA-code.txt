@@ -1,0 +1,82 @@
+Attribute VB_Name = "Module1"
+Sub stonks()
+    
+    For Each ws In Worksheets
+    
+        i = 2
+        TickCount = 2
+        Dim YearlyChange As Double
+        
+        
+        ws.Range("I1").Value = "Ticker"
+        ws.Range("J1").Value = "Yearly Change"
+        ws.Range("K1").Value = "Percent Change"
+        ws.Range("L1").Value = "Total Stock Volume"
+        ws.Range("O2").Value = "Greatest % Increase"
+        ws.Range("O3").Value = "Greatest % Decrease"
+        ws.Range("O4").Value = "Greatest Total Volume"
+        ws.Range("P1").Value = "Ticker"
+        ws.Range("Q1").Value = "Value"
+        X = True
+        
+        While X = True
+            Volume = 0
+            StartPrice = ws.Cells(i, 3).Value
+            While ws.Cells(i, 1).Value = ws.Cells(i + 1, 1).Value
+                Volume = Volume + ws.Cells(i, 7).Value
+                i = i + 1
+            Wend
+            EndPrice = ws.Cells(i, 6).Value
+            YearlyChange = EndPrice - StartPrice
+            If StartPrice = 0 Then
+                PercentChange = 0
+            Else
+                PercentChange = (EndPrice - StartPrice) / StartPrice
+            End If
+            ws.Cells(TickCount, 9).Value = ws.Cells(i, 1).Value
+            ws.Cells(TickCount, 10).Value = YearlyChange
+            If YearlyChange > 0 Then
+                ws.Cells(TickCount, 10).Interior.ColorIndex = "50"
+            Else
+                ws.Cells(TickCount, 10).Interior.ColorIndex = "53"
+            End If
+            ws.Cells(TickCount, 10).NumberFormat = "0.00#"
+            ws.Cells(TickCount, 11).Value = PercentChange
+            ws.Cells(TickCount, 11).NumberFormat = "0.00%"
+            ws.Cells(TickCount, 12).Value = Volume
+            TickCount = TickCount + 1
+            i = i + 1
+            If ws.Cells(i, 1).Value = 0 Then
+                X = False
+            End If
+        Wend
+        
+        j = 1
+        
+        While ws.Cells(j, 9).Value <> 0
+            If ws.Cells(j + 1, 11).Value > Ginc Then
+                Ginc = ws.Cells(j + 1, 11).Value
+                Ginctic = ws.Cells(j + 1, 9).Value
+            End If
+            If ws.Cells(j + 1, 11).Value < Gdec Then
+                Gdec = ws.Cells(j + 1, 11).Value
+                Gdectic = ws.Cells(j + 1, 9).Value
+            End If
+            If ws.Cells(j + 1, 12) > Gtotv Then
+                Gtotv = ws.Cells(j + 1, 12).Value
+                Gtotvtic = ws.Cells(j + 1, 9).Value
+            End If
+            j = j + 1
+        Wend
+    Next ws
+    For Each ws In Worksheets
+            ws.Range("P2").Value = Ginctic
+            ws.Range("P3").Value = Gdectic
+            ws.Range("P4").Value = Gtotvtic
+            ws.Range("Q2").Value = Ginc
+            ws.Range("Q3").Value = Gdec
+            ws.Range("Q4").Value = Gtotv
+            ws.Range("Q2").NumberFormat = "0.00%"
+            ws.Range("Q3").NumberFormat = "0.00%"
+    Next ws
+End Sub
